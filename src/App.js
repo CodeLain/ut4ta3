@@ -2,7 +2,7 @@ import { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-const ToDoList = ({taskList, deleteTask}) => {
+const ToDoList = ({taskList, deleteTask, editTask}) => {
   return (
     <ul>
       {taskList.map((task, index) => (
@@ -13,6 +13,11 @@ const ToDoList = ({taskList, deleteTask}) => {
           >
             Delete
           </button>
+          <button 
+            onClick={() => editTask(index)} 
+          >
+            Edit task
+          </button>
         </li>
       ))}
     </ul>
@@ -22,6 +27,8 @@ const ToDoList = ({taskList, deleteTask}) => {
 function App() {
   const [taskText, setTaskText] = useState('');
   const [taskList, setTaskList] = useState([]);
+  const [edditing , setEdditing] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
 
   const handleInputChange = (event) => {
     setTaskText(event.target.value);
@@ -36,6 +43,20 @@ function App() {
     setTaskList(taskList.filter((taskText, taskIndex) => taskIndex !== index));
   };
 
+  const handleEditTask = (index) => {
+    let task = taskList[index];
+    setTaskText(task);
+    setEdditing(true);
+    setEditIndex(index);
+  };
+
+  const handleEditSave = () => {
+    taskList[editIndex] = taskText;
+    setTaskText('');
+    setEditIndex(null);
+    setEdditing(false);
+  };
+
 
 
   return (
@@ -48,8 +69,11 @@ function App() {
           onChange={handleInputChange}
           placeholder="Nueva tarea"
         />
-        <button onClick={handleAddTask}>Add Task</button>
-        <ToDoList taskList={taskList} deleteTask={handleDeleteTask} />
+         {edditing ? 
+          <button onClick={handleEditSave}>SAve Eddit</button>
+          : <button onClick={handleAddTask}>Add Task</button>}
+       
+        <ToDoList taskList={taskList} deleteTask={handleDeleteTask} editTask={handleEditTask} />
       </header>
     </div>
   );
